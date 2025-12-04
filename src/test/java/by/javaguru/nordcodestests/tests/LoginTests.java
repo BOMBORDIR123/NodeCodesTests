@@ -139,16 +139,23 @@ public class LoginTests extends TestBase {
     }
 
     /**
-     * Граничное значение: валидный токен длиной 32 символа,
-     * состоящий из случайных символов A-Z0-9 — должен быть LOGIN OK.
+     * Проверяет валидацию токена при LOGIN.
+     * Тест отправляет токен с недопустимыми символами (не 0-9, A-Z) и ожидает:
+     * - result = "ERROR"
+     * - сообщение об ошибке, соответствующее паттерну "^[0-9A-Z]{32}$"
      */
     @Test
-    @Description("Граница: случайный токен длиной 32 символа из диапазона A-Z0-9 — ожидаем LOGIN OK")
-    void testTokenLength32ValidRandom() {
-        String token = "0123456789ABCDEF0123456789ABCDEF";
+    @Description("Токен с недопустимыми символами (не 0-9, A-Z) должен приводить к ERROR с правильным сообщением")
+    void testLoginInvalidTokenPattern() {
+        String token = "ABCDEF1234567890gh!@#$%^&*()_+12";
 
         Response response = ApiClient.sendRequest(token, "LOGIN");
-        assertEquals("OK", response.jsonPath().getString("result"));
+
+        assertEquals("ERROR", response.jsonPath().getString("result"));
+        assertEquals(
+                "token: должно соответствовать \"^[0-9A-Z]{32}$\"",
+                response.jsonPath().getString("message")
+        );
 
         ApiClient.sendRequest(token, "LOGOUT");
     }

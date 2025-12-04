@@ -9,7 +9,7 @@ import java.security.SecureRandom;
  */
 public class TokenGenerator {
 
-    private static final String SYMBOLS = "0123456789ABCDEF";
+    private static final String SYMBOLS = "0123456789ABCDEF0123456789ABCDEF";
     private static final SecureRandom RANDOM = new SecureRandom();
 
     public static String generateToken() {
